@@ -1,6 +1,7 @@
 #pragma once
 
 #include <prim/seadSafeString.h>
+#include "common/aglGPUCommon.hpp"
 #include "detail/aglSurface.h"
 #include "driver/aglNVNtexture.h"
 
@@ -40,18 +41,18 @@ public:
     void setDebugLabel(const sead::SafeString& debug_label);
     void getDebugLabel() const;
 
+    void setImagePtr(GPUMemVoidAddr image_ptr, u32);
+    void setMipPtr(GPUMemVoidAddr mip_ptr);
+
 private:
-    void* _0;
-    u32 _8;
-    u32 _c;
-    void* _10;
-    void* _18;
-    void* _20;
-    void* _28;
+    GPUMemVoidAddr mImagePtr;
+    GPUMemVoidAddr mMipPtr;
     detail::Surface mSurface;
     TextureFormat mTextureFormat;
-    u8 _58[0x120 - 0x58];
-    const char* mDebugLabel;  // "agl::TextureData string"
+    u8 _56;
+    driver::NVNtexture_ mNVNtexture
+    const char* mDebugLabel;  // "agl::TextureData" string
 };
+static_assert(sizeof(TextureData) == 0x128);
 
 }  // namespace agl
