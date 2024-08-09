@@ -44,6 +44,11 @@ public:
 
     void finalize();
 
+    const NVNmemoryPool* getNVNmemoryPool() const
+    {
+        return mDriverPool;
+    }
+
 private:
     NVNmemoryPool mDriverPool;
     MemoryPoolType mMemoryType;

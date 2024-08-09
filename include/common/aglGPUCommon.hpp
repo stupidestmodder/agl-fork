@@ -1,6 +1,6 @@
 #pragma once
 
-#include <basis/seadTypes.h>
+#include <common/aglGPUMemAddr.h>
 
 namespace agl {
 
@@ -18,13 +18,7 @@ enum class MemoryAttribute : u32 {
     // TODO: More?
 };
 
-struct GPUMemVoidAddr {
-    // FIXME: what are thoses?
-    void* _0;
-    void* _8;
-    u64 mAddress;
-
-    u64 getGPUMemBlock() const { return mAddress; }
-};
+using GPUMemVoidAddr = GPUMemAddr<void>;
+using ConstGPUMemVoidAddr = const GPUMemVoidAddr;
 
 }  // namespace agl

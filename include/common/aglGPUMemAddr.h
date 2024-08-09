@@ -1,6 +1,7 @@
 #pragma once
 
 #include "common/aglGPUMemBlock.h"
+#include "detail/aglGPUMemBlockMgr.h"
 #include "detail/aglMemoryPoolHeap.h"
 
 namespace sead {
@@ -8,25 +9,70 @@ class Heap;
 }
 
 namespace agl {
+
 class GPUMemAddrBase {
 public:
-    GPUMemAddrBase(const GPUMemBlockBase& memBlock, u64 offset);
+    GPUMemAddrBase()
+        : mpGPUMemPool(nullptr)
+        , mByteOffset(0)
+        , mpGPUMemBlock(nullptr)
+    {
+    }
 
-    u32 verify_() const;
-    void deleteGPUMemBlock() const;
-    void invalidate();
+    GPUMemAddrBase(const GPUMemBlockBase& memory, u64 byteOffset);
+
+    bool isValid() const
+    {
+        return mpGPUMemPool != nullptr;
+    }
+
+    detail::MemoryPool* getGPUMemPool()
+    {
+        return mpGPUMemPool;
+    }
+
+    u32 getByteOffset() const
+    {
+        return mByteOffset;
+    }
+
+    GPUMemBlockBase* getGPUMemBlock()
+    {
+        return mpGPUMemBlock;
+    }
+
+    // GPUMemAddrBase byteOffset() const
+    // {
+    // }
+
+    void* ptr()
+    {
+        if (isValid())
+            return nvnMemoryPoolMap(mpGPUMemPool->getNVNmemoryPool());
+
+        return nullptr;
+    }
+
     u32 getAlignmentAddress() const;
     void setByteOffsetByPtr(void* ptr);
-    void roundUp(int addr);
-    void flushCPUCache(u64);
-    void invalidateCPUCache(u64);
+    void roundUp(s32 alignment);
+
+    void invalidate();
+    void deleteGPUMemBlock() const;
+    void flushCPUCache(u64 size) const;
+    void invalidateCPUCache(u64 size) const;
 
 private:
-    detail::MemoryPool* mMemoryPool;
-    int mAlignmentAddr;
-    GPUMemBlockBase* mMemoryBlock;
+    u32 verify_() const;
+
+private:
+    detail::MemoryPool* mpGPUMemPool;
+    u32 mByteOffset;
+    GPUMemBlockBase* mpGPUMemBlock;
 };
 
+// TODO
 template <typename T>
 class GPUMemAddr : public GPUMemAddrBase {};
+
 }  // namespace agl
